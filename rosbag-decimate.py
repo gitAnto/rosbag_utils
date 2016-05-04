@@ -71,7 +71,7 @@ class rosbag_decimate:
             print 'Do not limit for : ', self.__exclude, 'seconds'
             print "Loading bag file... (This could take a while. Time for a coffe?)"
             self.__i = 0
-        else:
+        elif (self.__i > 0):
             sys.stdout.write("%6.1f %% \r" % (self.__i*100.0/self.__count))
             sys.stdout.flush()
             
