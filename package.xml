@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package>
+  <name>rosbag_utils</name>
+  <version>0.0.1</version>
+  <description>The rosbag_utils package</description>
+
+  <maintainer email="petitti@ba.issia.cnr.it">Antonio Petitti</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">http://www.issia.cnr.it/wiki-robo/index.php/Rosbag_utils</url>
+
+  <author email="antoniocoratelli@gmail.com">Antonio Coratelli</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>tf</build_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>tf</run_depend>
+
+  <export>
+  </export>
+</package>
