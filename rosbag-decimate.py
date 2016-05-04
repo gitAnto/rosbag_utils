@@ -88,17 +88,19 @@ class rosbag_decimate:
 
         self.__count  = bag_i.get_message_count()
         self.__t_init = bag_i.get_start_time()
-        self.__t_last = self.__t_init
+        self.__t_last = dict()
+        for topic in self.__topics:
+            self.__t_last[topic] = self.__t_init
 
         # loop every message in bag
         for topic, msg, t in bag_i.read_messages():
             
             # decimate topics that need decimation
             if topic in self.__topics:
-                if (t.to_sec() - self.__t_last) > self.__rate**(-1) \
+                if (t.to_sec() - self.__t_last[topic]) >= self.__rate**(-1) \
                 or (t.to_sec() - self.__t_init) < self.__exclude:
                     bag_o.write(topic, msg, t)
-                    self.__t_last = t.to_sec()
+                    self.__t_last[topic] = t.to_sec()
             
             # directly save topics that don't need decimation
             else:
