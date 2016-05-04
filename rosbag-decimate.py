@@ -66,8 +66,7 @@ class rosbag_decimate:
         if (self.__i == -1):
             print 'Input            : ', self.__file_i
             print 'Output           : ', self.__file_o
-            for tp in self.__topics:
-                print 'Decimate topic   : ', tp
+            for tp in self.__topics: print 'Decimate topic   : ', tp
             print 'Maximum Rate     : ', self.__rate, 'Hz'
             print 'Do not limit for : ', self.__exclude, 'seconds'
             print "Loading bag file... (This could take a while. Time for a coffe?)"
