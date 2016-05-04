@@ -77,6 +77,8 @@ class rosbag_decimate:
             
         if (self.__i < self.__count):
             threading.Timer(self.REFRESH_INTERVAL, self._show_info).start()
+        else:
+            print
 
 
     def _decimate(self):
