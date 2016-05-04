@@ -1,103 +1,117 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-################################################################################
-#
-# INFO
-#   legge il contenuto di una bag e ne crea una nuova decimando i messaggi
-#   di alcuni topic.
-#
-# USO
-#   rosbag-filter <input-file.bag>
-#
-# OUTPUT
-#   il percorso del file di uscita e' "input-file_DEC.bag"
-#
-# CONFIGURAZIONE
-# - topic_nod e' la lista dei topic da non decimare
-# - topic_dec e' un dizionario che contiene come chiavi i topic da decimare, e 
-#   come valori il tempo minimo (in secondi) fra la pubblicazione di un 
-#   messaggio e il seguente nel dato topic
-# - t_nodec e' il tempo (in secondi) che deve trascorrere dall'inizio della bag
-#   prima di cominciare a decimare i topic in topic_dec
-#
-################################################################################
-
-topics_nod = [
-    '/odom',
-    '/tf',
-    '/camera/depth_registered/camera_info',
-    '/camera/rgb/camera_info',
-]
-
-topics_dec = {
-    '/camera/depth_registered/hw_registered/image_rect' : 0.2 ,
-    '/camera/rgb/image_rect_color'                      : 0.2 ,
-}
-t_nodec = 5.0
-
-################################################################################
+'''rosbag-decimate
+    
+    This script reads the content of a rosbag file (.bag) and creates a new
+    rosbag file decimating the content of some topics.
+    
+    Example:
+        $ python rosbag-decimate.py -i input.bag -o output.bag \
+            -r 10 -t '/odom' -t '/camera/rgb/raw' -x 3
+        
+        Will decimate topics '/odom' and '/camera/rgb/raw' from 'input.bag'
+        limiting the publish rate to 10 Hz. The new bag will be 'output.bag'.
+        The messages in the first 3 seconds will not be limited.
+    
+    Options:
+        -i PATH  : path to the input rosbag (mandatory)
+        -o PATH  : path to the output rosbag (mandatory)
+        -r NUM   : maximum rate of the selected topics (default 10) [Hz]
+        -x NUM   : don't limit messages in the first NUM seconds (default 5)
+        -t TOPIC : topic that should be limited (multiple allowed)
+    
+'''
 
 import rosbag
 import time
 import sys
 import os
-
+import argparse
 import threading
 
-# graphic info function
-def show_info():
-    print "\033c", "%0.1f %%" % (i*100.0/count)
-    print 'I:', bag_i_path
-    print 'O:', bag_o_path
-    for x in topics_dec:
-        print topic_dec_info[x], "%0.2f" % topic_dec_last[x], x
-    if (i < count):
-        threading.Timer(0.1, show_info).start()
 
-# retrieve input file from args, calculate output file name
-bag_i_path = sys.argv[1]
-bag_o_path = os.path.splitext(bag_i_path)[0] + "_DEC.bag"
+class rosbag_decimate:
 
-# open bags
-bag_i = rosbag.Bag(bag_i_path, 'r')
-bag_o = rosbag.Bag(bag_o_path, 'w')
+    def __init__(self):
+        self.REFRESH_INTERVAL = 1
+        
+        self._parse_cl()
+        self._show_info()
+        self._decimate()
 
-# initialize internal variables
-t_init = 0
-topic_dec_last = dict()
-topic_dec_info = dict();
-for topic in topics_dec:
-    topic_dec_info[topic] = ' '*40;
-    topic_dec_last[topic] = 0;
-i = 0
-count = bag_i.get_message_count()
 
-# start graphics async loop
-show_info()
+    def _parse_cl(self):
+        """Parse command line arguments.
+        """
+        parser = argparse.ArgumentParser()
+        parser.add_argument('-i', action='store', type=str)
+        parser.add_argument('-o', action='store', type=str)
+        parser.add_argument('-r', action='store', type=float, default=10.0)
+        parser.add_argument('-x', action='store', type=float, default=5.0)
+        parser.add_argument('-t', action='append', type=str)
+        results = parser.parse_args()
+        
+        self.__i       = -1
+        self.__count   = 1
+        self.__file_i  = results.i
+        self.__file_o  = results.o
+        self.__topics  = results.t
+        self.__rate    = results.r
+        self.__exclude = results.x
 
-# loop every message in bag
-for topic, msg, t in bag_i.read_messages(topics_nod + topics_dec.keys()):
 
-    if t_init == 0:
-        t_init = t.to_sec()
-
-    # directly save topics that don't need decimation
-    if not topic in topics_dec:
-        bag_o.write(topic, msg, t)
-
-	# decimate topics
-    else:
-        if (t.to_sec() - topic_dec_last[topic]) >= topics_dec[topic] or (t.to_sec() - t_init) < t_nodec:
-            bag_o.write(topic, msg, t)
-            topic_dec_last[topic] = t.to_sec()
-            topic_dec_info[topic] = topic_dec_info[topic][1:]+u'▓'
+    def _show_info(self):
+        """Shows the processing status in the terminal.
+        """
+        if (self.__i == -1):
+            print 'Input            : ', self.__file_i
+            print 'Output           : ', self.__file_o
+            for tp in self.__topics:
+                print 'Decimate topic   : ', tp
+            print 'Maximum Rate     : ', self.__rate, 'Hz'
+            print 'Do not limit for : ', self.__exclude, 'seconds'
+            print "Loading bag file... (This could take a while. Time for a coffe?)"
+            self.__i = 0
         else:
-            topic_dec_info[topic] = topic_dec_info[topic][1:]+u'░'
+            sys.stdout.write("%6.1f %% \r" % (self.__i*100.0/self.__count))
+            sys.stdout.flush()
+            
+        if (self.__i < self.__count):
+            threading.Timer(self.REFRESH_INTERVAL, self._show_info).start()
 
-    i += 1
 
-i = count
+    def _decimate(self):
+        # open bags
+        bag_i = rosbag.Bag(self.__file_i, 'r')
+        bag_o = rosbag.Bag(self.__file_o, 'w')
 
-bag_i.close()
-bag_o.close()
+        self.__count  = bag_i.get_message_count()
+        self.__t_init = bag_i.get_start_time()
+        self.__t_last = self.__t_init
+
+        # loop every message in bag
+        for topic, msg, t in bag_i.read_messages():
+            
+            # decimate topics that need decimation
+            if topic in self.__topics:
+                if (t.to_sec() - self.__t_last) > self.__rate**(-1) \
+                or (t.to_sec() - self.__t_init) < self.__exclude:
+                    bag_o.write(topic, msg, t)
+                    self.__t_last = t.to_sec()
+            
+            # directly save topics that don't need decimation
+            else:
+                bag_o.write(topic, msg, t)
+
+            self.__i += 1
+        
+        self.__i = self.__count
+        
+        bag_i.close()
+        bag_o.close()
+
+
+if __name__ == "__main__":
+
+    c = rosbag_decimate()
 
