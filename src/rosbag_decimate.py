@@ -6,7 +6,7 @@
     rosbag file decimating the content of some topics.
     
     Example:
-        $ python rosbag-decimate.py -i input.bag -o output.bag \
+        $ python rosbag-decimate.py -i input.bag -o output.bag \\
             -r 10 -t '/odom' -t '/camera/rgb/raw' -x 3
         
         Will decimate topics '/odom' and '/camera/rgb/raw' from 'input.bag'
