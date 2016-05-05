@@ -76,13 +76,19 @@ class rosbag_decimate:
     def _parse_cl(self):
         """Parse command line arguments.
         """
-        parser = argparse.ArgumentParser()
+        parser = argparse.ArgumentParser(add_help=False)
         parser.add_argument('-i', action='store', type=str)
         parser.add_argument('-o', action='store', type=str)
         parser.add_argument('-r', action='store', type=float, default=10.0)
         parser.add_argument('-x', action='store', type=float, default=5.0)
         parser.add_argument('-t', action='append', type=str)
+        parser.add_argument('-h', action='store_true', default=False)
+        
         results = parser.parse_args()
+        
+        if (results.h) == True:
+            print __doc__
+            sys.exit(0)
         
         self.__i       = -1
         self.__count   = 1
