@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''rosbag-decimate
+'''rosbag_decimate
     
     This script reads the content of a rosbag file (.bag) and creates a new
     rosbag file decimating the content of some topics.
     
     Example:
-        $ python rosbag-decimate.py -i input.bag -o output.bag \\
+        $ ./rosbag_decimate.py -i input.bag -o output.bag \\
             -r 10 -t '/odom' -t '/camera/rgb/raw' -x 3
         
         Will decimate topics '/odom' and '/camera/rgb/raw' from 'input.bag'
