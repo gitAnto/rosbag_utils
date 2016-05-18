@@ -21,7 +21,7 @@ ROS catkin package containing some utilities for manipulating rosbags.
     This script reads the content of a rosbag file (.bag) and creates a new
     rosbag file removing the trailing slashes in frame_id and child_frame_id
     contained in odometry topics.
-    (Useful because new tf2 **do not accept** frame_ids with trailing slashes.)
+    (Useful because new tf2 **doesn't accept** frame_ids with trailing slashes.)
     
     Example:
         $ python rosbag_odom_unslasher.py -i input.bag -o output.bag \
