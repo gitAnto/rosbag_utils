@@ -8,8 +8,6 @@
 
   <license>BSD</license>
 
-  <url type="website">http://www.issia.cnr.it/wiki-robo/index.php/Rosbag_utils</url>
-
   <author email="antoniocoratelli@gmail.com">Antonio Coratelli</author>
 
   <buildtool_depend>catkin</buildtool_depend>
