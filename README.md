@@ -2,6 +2,9 @@
 
 ROS catkin package containing some utilities for manipulating rosbags.
 
+Copyright (c) 2016, Antonio Coratelli.
+
+
 ## rosbag_decimate
 ```
     This script reads the content of a rosbag file (.bag) and creates a new
