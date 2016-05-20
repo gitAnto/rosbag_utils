@@ -5,7 +5,14 @@ ROS catkin package containing some utilities for manipulating rosbags.
 Copyright (c) 2016, Antonio Coratelli.
 
 
-## rosbag_decimate
+## License
+
+BSD 3-Clause. See `LICENSE` file.
+
+
+## Scripts
+
+### rosbag_decimate
 ```
     This script reads the content of a rosbag file (.bag) and creates a new
     rosbag file decimating the content of some topics.
@@ -19,7 +26,7 @@ Copyright (c) 2016, Antonio Coratelli.
         The messages in the first 3 seconds will not be limited.
 ```
 
-## rosbag_odom_unslasher
+### rosbag_odom_unslasher
 ```
     This script reads the content of a rosbag file (.bag) and creates a new
     rosbag file removing the trailing slashes in frame_id and child_frame_id
