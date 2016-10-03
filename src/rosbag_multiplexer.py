@@ -39,7 +39,8 @@ class InputBag():
             data_mod.message.header = self.rebase_header(data_mod.message.header, new_time)
         except: pass
         try:
-            for i in data_mod.message.transforms: i.header = self.rebase_header(i.header, new_time)
+            for i in data_mod.message.transforms:
+                i.header = self.rebase_header(i.header, new_time)
         except: pass
         return data_mod
 
@@ -58,7 +59,8 @@ class InputBag():
         self.time_start = first_message.timestamp
 
     def calculate_time_offset(self, rebase_time):
-        self.time_offset = rebase_time - self.time_start + rospy.Duration().from_sec(random.uniform(0, 0.1))
+        random_time = rospy.Duration().from_sec(random.uniform(0, 0.1))
+        self.time_offset = rebase_time - self.time_start + random_time
 
     def get_next_message_index(self):
         if self.message_index < self.message_count:
