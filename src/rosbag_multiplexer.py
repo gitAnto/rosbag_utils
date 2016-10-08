@@ -45,8 +45,8 @@ class InputBag():
         return data_mod
 
     def rebase_header(self, header, new_time):
-        header.stamp.secs  = header_time.secs
-        header.stamp.nsecs = header_time.nsecs
+        header.stamp.secs  = new_time.secs
+        header.stamp.nsecs = new_time.nsecs
         return header
 
     def read_message_by_index(self, index):
