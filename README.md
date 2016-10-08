@@ -12,6 +12,20 @@ BSD 3-Clause. See `LICENSE` file.
 
 ## Scripts
 
+### rosbag_multiplexer
+```
+    This script reads the content of an arbitrary number of rosbag files and
+    creates a new bag that merges the contents of the input bags as these were
+    playing together. Message timestamps are modified appropriately.
+
+    Example:
+        $ python rosbag_multiplexer.py -i bag_1.bag -i bag_2.bag -o multi.bag \
+            -t 1000
+
+        Will create a new bag 'multi.bag' with all the content from 'bag_1.bag'
+        and 'bag_2.bag' starting at time 1000.
+```
+
 ### rosbag_tf_remove_msg
 ```
     This script reads the content of a rosbag file (.bag) and creates a new
