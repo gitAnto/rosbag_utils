@@ -9,7 +9,7 @@ import argparse
 import threading
 
 
-class rosbag_odom_unslasher:
+class rosbag_tf_remove_msg:
 
     def __init__(self):
         self.REFRESH_INTERVAL = 1
@@ -89,4 +89,4 @@ class rosbag_odom_unslasher:
 
 if __name__ == "__main__":
 
-    c = rosbag_odom_unslasher()
+    c = rosbag_tf_remove_msg()
