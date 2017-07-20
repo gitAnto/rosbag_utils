@@ -2,7 +2,9 @@
 
 ROS catkin package containing some utilities for manipulating rosbags.
 
-Copyright (c) 2016, Antonio Coratelli.
+Copyright (c) 2016 
+Antonio Coratelli
+Antonio Petitti
 
 
 ## License
